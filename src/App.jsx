@@ -583,15 +583,15 @@ export default function FlashcardSystem() {
     setNotes((prev) => ({ ...prev, [cardId]: { ...(prev[cardId] || {}), buttonState: value } }));
   };
 
-  // フラッシュカード巡回用:確定済みフィルター適用(表紙は常に含める)
+  // フラッシュカード巡回用:確定済みフィルター適用(表紙はフィルター時には含めない)
   const visibleCards = colorFilter.length === 0
     ? CARDS
-    : CARDS.filter((c) => c.isCover || colorFilter.includes(getButtonState(c.id)));
+    : CARDS.filter((c) => !c.isCover && colorFilter.includes(getButtonState(c.id)));
 
-  // 目次プレビュー用:メニュー内の選択状態を即時反映(表紙は常に含める)
+  // 目次プレビュー用:メニュー内の選択状態を即時反映(表紙はフィルター時には含めない)
   const previewCards = pendingColorFilter.length === 0
     ? CARDS
-    : CARDS.filter((c) => c.isCover || pendingColorFilter.includes(getButtonState(c.id)));
+    : CARDS.filter((c) => !c.isCover && pendingColorFilter.includes(getButtonState(c.id)));
 
   // currentIndexがvisibleCardsの範囲外になったら0に戻す
   useEffect(() => {
@@ -1018,10 +1018,10 @@ export default function FlashcardSystem() {
                         if (changed) {
                           setColorFilter([...next]);
                         }
-                        // 確定後の visibleCards で何枚目かを再計算(表紙は常に含める)
+                        // 確定後の visibleCards で何枚目かを再計算(表紙はフィルター時には含めない)
                         const newVisible = next.length === 0
                           ? CARDS
-                          : CARDS.filter((cc) => cc.isCover || next.includes(getButtonState(cc.id)));
+                          : CARDS.filter((cc) => !cc.isCover && next.includes(getButtonState(cc.id)));
                         const newIdx = newVisible.findIndex((cc) => cc.id === c.id);
                         setSkipFlipAnimation(true);
                         setIsFlipped(false);
